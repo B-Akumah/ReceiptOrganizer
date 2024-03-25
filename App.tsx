@@ -1,11 +1,7 @@
-import {StyleSheet, Text, View} from 'react-native';
-import CategoriesPage from "./pages/CategoriesPage";
+import AppNavigator from "./AppNavigator";
 
-export default function App() {
-
-  return (
-      <CategoriesPage />
-  );
+function App() {
+  return (<AppNavigator/>)
 }
 
-const styles = StyleSheet.create({});
+export default App;

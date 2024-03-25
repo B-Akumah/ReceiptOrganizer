@@ -1,37 +1,54 @@
-// HomePage.js
-import React, {useState} from 'react';
 import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Ionicons} from "@expo/vector-icons";
-import CategoryItem from "../components/CategoryItem";
+import React, {useState} from "react";
+import SpacesItem from "../components/SpacesItem";
 
 let isDeletable = false;
-function CategoriesPage() {
-  const [receiptCategoryList, setReceiptCategory] = useState<string[Category]>([{
-    title: 'Health',
+
+function SpacesPage() {
+  const [SpacesList, setSpaces] = useState<string[Space]>([{
+    index: 0,
+    title: 'Home',
     isToggleDelete: isDeletable
   }]);
-  const addReceiptCategory = () => {
-    setReceiptCategory([...receiptCategoryList, {title: 'New Title', isToggleDelete: isDeletable}])
-  };
-  const toggleCategoryDeletionButton = () => {
-    isDeletable = !isDeletable
-    for (const receiptCategory: Category of receiptCategoryList) {
-      receiptCategory.isToggleDelete = isDeletable
+  const addSpaces = () => {
+    isDeletable = false;
+    for (const Spaces: Space of SpacesList) {
+      Spaces.isToggleDelete = isDeletable
     }
-    setReceiptCategory([...receiptCategoryList])
+    setSpaces([...SpacesList, {
+      index: SpacesList.length,
+      title: 'New Title',
+      isToggleDelete: isDeletable
+    }])
   };
+  const toggleSpacesDeletionButton = () => {
+    isDeletable = !isDeletable
+    for (const Spaces: Space of SpacesList) {
+      Spaces.isToggleDelete = isDeletable
+    }
+    setSpaces([...SpacesList])
+  };
+
+  const handleDeleteCategory = (spaceToDelete: Space) => {
+    let filteredList = SpacesList.filter((item: Space) => item.index !== spaceToDelete.index);
+    if (filteredList.length == 0) {
+      isDeletable = false;
+    }
+    setSpaces(SpacesList.filter((item: Space) => item.index !== spaceToDelete.index))
+  }
 
   return (
       <View style={styles.container}>
         <View style={styles.headerRow}>
           <TouchableOpacity
-              onPress={addReceiptCategory}
+              onPress={addSpaces}
               style={styles.addButton}>
             <Ionicons name="add-circle-outline" size={45}/>
-            <Text>Add Category</Text>
+            <Text>Add Spaces</Text>
           </TouchableOpacity>
           <TouchableOpacity
-              onPress={toggleCategoryDeletionButton}
+              onPress={toggleSpacesDeletionButton}
               styles={styles.trashIcon}>
             {isDeletable ?
                 (<Text style={styles.trashDone}>Done</Text>)
@@ -41,37 +58,27 @@ function CategoriesPage() {
           </TouchableOpacity>
         </View>
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
-          <View style={styles.categoryRow}>
-            {receiptCategoryList.map((data, index) => (
-                <CategoryItem key={index} categoryData={data}/>
+          <View style={styles.SpacesRow}>
+            {SpacesList.map((title, index) => (
+                <SpacesItem key={index} SpacesData={title} onDelete={handleDeleteCategory}/>
             ))}
           </View>
         </ScrollView>
       </View>
-  );
-};
-
+  )
+}
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'flex-start',
-    marginTop: 50,
-    paddingTop:20,
-  },
-  headerStyle: {
-    paddingLeft: 45,
-    color: '#000',
-    fontSize: 25,
-    alignSelf: "center",
-    flex: 1, // Expand to fill available space
+    justifyContent: 'center',
+    paddingTop: 20,
   },
   trashIcon: {
     color: '#000',
   },
-  trashDone : {
+  trashDone: {
     color: '#ff0000',
     fontSize: 20,
     fontWeight: "bold"
@@ -79,10 +86,11 @@ const styles = StyleSheet.create({
   headerRow: {
     flexDirection: 'row',
     alignItems: 'center', // Align items vertically in the center
+    justifyContent: "space-between",
     width: '100%', // Ensures the row spans the entire width of the container
     paddingHorizontal: 20, // Adds some padding to the sides of the row
   },
-  categoryRow: {
+  SpacesRow: {
     justifyContent: 'center',
     marginTop: 30,
     flexDirection: 'row',
@@ -103,10 +111,10 @@ const styles = StyleSheet.create({
   },
 });
 
-export class Category {
+export class Space {
+  index: number;
   title: string;
   isToggleDelete: boolean;
 }
-export default CategoriesPage;
 
-
+export default SpacesPage;
