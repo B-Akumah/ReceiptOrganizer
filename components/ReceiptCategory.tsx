@@ -1,15 +1,19 @@
 import React from 'react';
 import {Dimensions, StyleSheet, Text, View} from 'react-native';
 import {Ionicons} from '@expo/vector-icons';
-import {lla} from "../App";
 
 const ReceiptCategory = ({title}) => {
   const windowWidth = Dimensions.get('window').width;
   const containerWidth = windowWidth * 0.40;
-  const containerHeight: lla = windowWidth * 0.40;
+  const containerHeight = windowWidth * 0.40;
 
   return (
       <View style={[styles.container, {width: containerWidth, height: containerHeight}]}>
+        {
+          title.isToggleDelete ? (
+              <Ionicons style={styles.closeIcon} name="close-outline" size={45} color="#fff"/>
+          ) : null
+        }
         <View style={styles.iconContainer}>
           <Ionicons name="receipt" size={24} color="#fff"/>
         </View>
@@ -20,11 +24,13 @@ const ReceiptCategory = ({title}) => {
 
 const styles = StyleSheet.create({
   container: {
+    position: 'relative', // Ensure that close button is positioned relative to this container
     borderRadius: 20,
     backgroundColor: '#595959',
+    margin: 10,
+    padding: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    margin: 10,
   },
   iconContainer: {
     width: 40,
@@ -39,6 +45,12 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  closeIcon: {
+    position: 'absolute', // Position the close button absolutely within the container
+    top: 3, // Adjust top and right values as needed to position the close button
+    right: 3,
+    color: '#ff0000'
   },
 });
 
