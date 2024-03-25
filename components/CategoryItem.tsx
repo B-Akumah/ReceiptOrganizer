@@ -8,8 +8,6 @@ const CategoryItem = ({categoryData, onDelete}) => {
   const containerHeight = windowWidth * 0.40;
 
   const handleDelete = () => {
-    console.log('HERERER')
-    console.log(categoryData)
     onDelete(categoryData)
   }
 

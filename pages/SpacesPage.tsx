@@ -6,7 +6,7 @@ import SpacesItem from "../components/SpacesItem";
 let isDeletable = false;
 
 function SpacesPage() {
-  const [SpacesList, setSpaces] = useState<string[Space]>([{
+  const [SpacesList, setSpacesList] = useState<string[Space]>([{
     index: 0,
     title: 'Home',
     isToggleDelete: isDeletable
@@ -16,7 +16,7 @@ function SpacesPage() {
     for (const Spaces: Space of SpacesList) {
       Spaces.isToggleDelete = isDeletable
     }
-    setSpaces([...SpacesList, {
+    setSpacesList([...SpacesList, {
       index: SpacesList.length,
       title: 'New Title',
       isToggleDelete: isDeletable
@@ -27,7 +27,7 @@ function SpacesPage() {
     for (const Spaces: Space of SpacesList) {
       Spaces.isToggleDelete = isDeletable
     }
-    setSpaces([...SpacesList])
+    setSpacesList([...SpacesList])
   };
 
   const handleDeleteCategory = (spaceToDelete: Space) => {
@@ -35,7 +35,7 @@ function SpacesPage() {
     if (filteredList.length == 0) {
       isDeletable = false;
     }
-    setSpaces(SpacesList.filter((item: Space) => item.index !== spaceToDelete.index))
+    setSpacesList(SpacesList.filter((item: Space) => item.index !== spaceToDelete.index))
   }
 
   return (

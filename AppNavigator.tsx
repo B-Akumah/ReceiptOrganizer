@@ -6,7 +6,7 @@ import {NavigationContainer} from "@react-navigation/native";
 const Stack = createStackNavigator();
 const AppNavigator = () => (
     <NavigationContainer>
-    <Stack.Navigator initialRouteName="Spaces">
+    <Stack.Navigator initialRouteName="Categories">
       <Stack.Screen name="Categories" component={CategoriesPage}/>
       <Stack.Screen name="Spaces" component={SpacesPage}/>
     </Stack.Navigator>
