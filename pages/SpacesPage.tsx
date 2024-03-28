@@ -1,26 +1,28 @@
-import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import {Ionicons} from "@expo/vector-icons";
 import React, {useState} from "react";
 import SpacesItem from "../components/SpacesItem";
+import AddSpaceModal from "../components/AddSpaceModal";
 
 let isDeletable = false;
 
-function SpacesPage() {
+
+function SpacesPage({visible, onAdd, onClose}) {
+
   const [SpacesList, setSpacesList] = useState<string[Space]>([{
     index: 0,
     title: 'Home',
     isToggleDelete: isDeletable
   }]);
+
+  const [isModalVisible, setModalVisible] = useState(false)
+
   const addSpaces = () => {
     isDeletable = false;
     for (const Spaces: Space of SpacesList) {
       Spaces.isToggleDelete = isDeletable
     }
-    setSpacesList([...SpacesList, {
-      index: SpacesList.length,
-      title: 'New Title',
-      isToggleDelete: isDeletable
-    }])
+    setModalVisible(true);
   };
   const toggleSpacesDeletionButton = () => {
     isDeletable = !isDeletable
@@ -36,6 +38,21 @@ function SpacesPage() {
       isDeletable = false;
     }
     setSpacesList(SpacesList.filter((item: Space) => item.index !== spaceToDelete.index))
+  }
+
+  const handleCloseModal = (nameInputValue) => {
+    setModalVisible(false)
+  }
+
+  const handleSubmitModal = (nameInputValue) => {
+    handleCloseModal(nameInputValue)
+
+
+    setSpacesList([...SpacesList, {
+      index: SpacesList.length,
+      title: nameInputValue,
+      isToggleDelete: isDeletable
+    }])
   }
 
   return (
@@ -54,9 +71,14 @@ function SpacesPage() {
                 (<Text style={styles.trashDone}>Done</Text>)
                 : (<Ionicons name="trash-outline" size={35}/>)
             }
-
           </TouchableOpacity>
         </View>
+
+        <AddSpaceModal
+        isModalVisible={isModalVisible}
+        onModalClose={handleCloseModal}
+        onSubmit={handleSubmitModal}
+        />
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
           <View style={styles.SpacesRow}>
             {SpacesList.map((title, index) => (

@@ -18,7 +18,11 @@ function CategoriesPage() {
     for (const Spaces: Space of receiptCategoryList) {
       Spaces.isToggleDelete = isDeletable
     }
-    setReceiptCategoryList([...receiptCategoryList, {index: receiptCategoryList.length, title: 'New Title', isToggleDelete: isDeletable}])
+    setReceiptCategoryList([...receiptCategoryList, {
+      index: receiptCategoryList.length,
+      title: 'New Title',
+      isToggleDelete: isDeletable
+    }])
   };
   const toggleCategoryDeletionButton = () => {
     isDeletable = !isDeletable

@@ -124,7 +124,7 @@
       </GradleProjectSettings>
       <GradleProjectSettings>
         <option name="externalProjectPath" value="$PROJECT_DIR$/node_modules/expo/scripts" />
-        <option name="gradleJvm" value="17 (2)" />
+        <option name="gradleJvm" value="17" />
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/node_modules/expo/scripts" />
