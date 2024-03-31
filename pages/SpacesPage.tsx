@@ -1,58 +1,95 @@
-import {Modal, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {Ionicons} from "@expo/vector-icons";
-import React, {useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import SpacesItem from "../components/SpacesItem";
 import AddSpaceModal from "../components/AddSpaceModal";
+import {Space, SpaceItem} from "../model/Space";
+import AppContext from "../context/AppContext";
 
-let isDeletable = false;
+let isConfigurableMode = false;
 
+let spaceInitItem: SpaceItem[] = []
 
-function SpacesPage({visible, onAdd, onClose}) {
+function SpacesPage() {
 
-  const [SpacesList, setSpacesList] = useState<string[Space]>([{
-    index: 0,
-    title: 'Home',
-    isToggleDelete: isDeletable
-  }]);
+  const [SpacesList, setSpacesList] = useState<SpaceItem[]>([]);
+  const {Spaces, setSpaces} = useContext(AppContext);
 
-  const [isModalVisible, setModalVisible] = useState(false)
+  const [isAddModalVisible, setAddModalVisible] = useState(false)
+  const [isEditModalVisible, setEditModalVisible] = useState(false)
+
+  useEffect(() => {
+    spaceInitItem = []
+    console.log(Spaces)
+    for (const data of Spaces) {
+      spaceInitItem.push(new SpaceItem(data, isConfigurableMode))
+    }
+    updateSpaceList(spaceInitItem)
+    // You can perform any initialization logic here
+  }, []); // Empty dependency array ensures this runs only once on mount
 
   const addSpaces = () => {
-    isDeletable = false;
-    for (const Spaces: Space of SpacesList) {
-      Spaces.isToggleDelete = isDeletable
+    isConfigurableMode = false;
+    for (const Spaces: SpaceItem of SpacesList) {
+      Spaces.isToggleDelete = isConfigurableMode
     }
-    setModalVisible(true);
+    setAddModalVisible(true);
   };
-  const toggleSpacesDeletionButton = () => {
-    isDeletable = !isDeletable
-    for (const Spaces: Space of SpacesList) {
-      Spaces.isToggleDelete = isDeletable
+  const toggleSpacesSettings = () => {
+    isConfigurableMode = !isConfigurableMode
+    for (const Spaces: SpaceItem of SpacesList) {
+      Spaces.isToggleDelete = isConfigurableMode
     }
-    setSpacesList([...SpacesList])
+    updateSpaceList([...SpacesList])
   };
 
-  const handleDeleteCategory = (spaceToDelete: Space) => {
-    let filteredList = SpacesList.filter((item: Space) => item.index !== spaceToDelete.index);
+  const handleDeleteSpace = (spaceToDelete: SpaceItem) => {
+    let filteredList = SpacesList.filter((item: SpaceItem) => item.space.index !== spaceToDelete.space.index);
     if (filteredList.length == 0) {
-      isDeletable = false;
+      isConfigurableMode = false;
     }
-    setSpacesList(SpacesList.filter((item: Space) => item.index !== spaceToDelete.index))
+    updateSpaceList(SpacesList.filter((item: SpaceItem) => item.space.index !== spaceToDelete.space.index))
   }
 
-  const handleCloseModal = (nameInputValue) => {
-    setModalVisible(false)
+  const handleEditCategory = () => {
+
+  }
+  const handleCloseAddModal = (nameInputValue, iconValue) => {
+    setAddModalVisible(false)
   }
 
-  const handleSubmitModal = (nameInputValue) => {
-    handleCloseModal(nameInputValue)
+  const handleSubmitModal = (nameInputValue, iconValue) => {
+    handleCloseAddModal(nameInputValue, iconValue)
 
+    const randomUuid: number = Math.floor(Math.random() * 100);
 
-    setSpacesList([...SpacesList, {
-      index: SpacesList.length,
-      title: nameInputValue,
-      isToggleDelete: isDeletable
-    }])
+    updateSpaceList(
+        [...SpacesList,
+          new SpaceItem(
+              new Space(
+                  nameInputValue.toLowerCase() + '1' + randomUuid,
+                  SpacesList.length,
+                  nameInputValue,
+                  iconValue
+              ),
+              isConfigurableMode)
+        ]
+    )
+  }
+
+  const updateSpaceList = (spaceItemList: SpaceItem[]) => {
+    setSpacesList(spaceItemList)
+    let newSpaces: Space[] = []
+
+    for (const spaceItem of spaceItemList) {
+      newSpaces.push(spaceItem.space)
+    }
+    console.log(newSpaces)
+    setSpaces(newSpaces)
+  }
+
+  const editSpace = () => {
+    toggleSpacesSettings()
   }
 
   return (
@@ -64,25 +101,35 @@ function SpacesPage({visible, onAdd, onClose}) {
             <Ionicons name="add-circle-outline" size={45}/>
             <Text>Add Spaces</Text>
           </TouchableOpacity>
-          <TouchableOpacity
-              onPress={toggleSpacesDeletionButton}
-              styles={styles.trashIcon}>
-            {isDeletable ?
-                (<Text style={styles.trashDone}>Done</Text>)
-                : (<Ionicons name="trash-outline" size={35}/>)
-            }
-          </TouchableOpacity>
+          {isConfigurableMode ?
+              <TouchableOpacity onPress={toggleSpacesSettings}>
+                <Text style={styles.trashDone}>Done</Text>
+              </TouchableOpacity> : null
+          }
+
         </View>
 
         <AddSpaceModal
-        isModalVisible={isModalVisible}
-        onModalClose={handleCloseModal}
-        onSubmit={handleSubmitModal}
+            isModalVisible={isAddModalVisible}
+            onModalClose={handleCloseAddModal}
+            onSubmit={handleSubmitModal}
         />
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
+
           <View style={styles.SpacesRow}>
-            {SpacesList.map((title, index) => (
-                <SpacesItem key={index} SpacesData={title} onDelete={handleDeleteCategory}/>
+            {SpacesList.map((spaceItem, index) => (
+                <TouchableOpacity
+                    key={index}
+                    onLongPress={editSpace}
+                    disabled={isConfigurableMode}
+                >
+                  <SpacesItem
+                      SpacesData={spaceItem}
+                      icon={spaceItem.space.icon}
+                      onDelete={handleDeleteSpace}
+                      onEdit={handleEditCategory}
+                  />
+                </TouchableOpacity>
             ))}
           </View>
         </ScrollView>
@@ -96,9 +143,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingTop: 20,
-  },
-  trashIcon: {
-    color: '#000',
   },
   trashDone: {
     color: '#ff0000',
@@ -132,11 +176,5 @@ const styles = StyleSheet.create({
     paddingBottom: 20, // Add some padding at the bottom to prevent the button from sticking to the edge
   },
 });
-
-export class Space {
-  index: number;
-  title: string;
-  isToggleDelete: boolean;
-}
 
 export default SpacesPage;

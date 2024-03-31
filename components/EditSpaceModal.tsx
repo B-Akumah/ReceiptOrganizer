@@ -3,12 +3,12 @@ import {Ionicons} from "@expo/vector-icons";
 import React, {useState} from "react";
 import SelectableIconGrid from "./SelectableIconGrid";
 
-const AddSpaceModal = ({isModalVisible, onModalClose, onSubmit}) => {
+const EditSpaceModal = ({isModalVisible, onModalClose, onSubmit, currentTitle, currentIcon}) => {
 
 
-  const [nameInputValue, setNameInputValue] = useState('');
-  const [selectedIcon, setSelectedicon] = useState('');
-  const [isInvalidForm, markInvalidForm] = useState(false);
+  const [nameInputValue, setNameInputValue] = useState<string>(currentTitle);
+  const [selectedIcon, setSelectedicon] = useState<string>(currentIcon);
+  const [isInvalidForm, markInvalidForm] = useState<boolean>(false);
 
   const setNewSpacesTitleInput = (text) => {
     setNameInputValue(text);
@@ -62,7 +62,7 @@ const AddSpaceModal = ({isModalVisible, onModalClose, onSubmit}) => {
               <Ionicons name="close-outline" size={30}/>
             </TouchableOpacity>
 
-            <Text style={styles.modalTitle}>Add New Spaces</Text>
+            <Text style={styles.modalTitle}>Edit Spaces</Text>
             <View style={styles.modalForm}>
               <Text style={styles.modalText}>Name:</Text>
               <TextInput
@@ -177,4 +177,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default AddSpaceModal;
+export default EditSpaceModal;
